@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA Calendar Events</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Новое событие</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Добавить событие</h1>
-    </header>
-    <main>
-        <form id="event-form">
-            <div class="form-group">
-                <label for="title">Название</label>
-                <input type="text" id="title" required placeholder="Например, Встреча">
-            </div>
-            <div class="form-group">
-                <label for="description">Описание</label>
-                <input type="text" id="description" placeholder="Краткое описание">
-            </div>
-            <div class="form-group">
-                <label for="start-dt">Начало</label>
-                <input type="datetime-local" id="start-dt" required>
-            </div>
-            <div class="form-group">
-                <label for="end-dt">Окончание <span class="optional">(необязательно)</span></label>
-                <input type="datetime-local" id="end-dt" placeholder="Необязательно">
-            </div>
-            <button type="submit">Добавить в календарь</button>
-        </form>
-        <div style="text-align: center; margin-top: 16px; font-size: 1.1em; color: #888;">0.1.0</div>
-    </main>
+  <header>
+    <h1>Новое событие</h1>
+  </header>
+  <main>
+    <form id="event-form" autocomplete="off">
+      <div class="form-group">
+        <label for="title">Название</label>
+        <input type="text" id="title" required placeholder="Например, Встреча" />
+      </div>
+      <div class="form-group">
+        <label for="description">Описание</label>
+        <input type="text" id="description" required placeholder="Краткое описание" />
+      </div>
+      <div class="form-row">
+  <div class="form-group">
+    <label for="start-datetime">Начало события</label>
+    <input type="datetime-local" id="start-datetime" required>
+  </div>
+  <div class="form-group">
+    <label for="end-datetime">Окончание события</label>
+    <input type="datetime-local" id="end-datetime">
+  </div>
+</div>
+
+      <button type="submit">Сохранить в Календарь (.ics)</button>
+    </form>
+  </main>
 </body>
 </html>

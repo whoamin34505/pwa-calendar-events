@@ -1,42 +1,45 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('event-form');
-    const startInput = document.getElementById('start-dt');
-    const endInput = document.getElementById('end-dt');
+    const startInput = document.getElementById('start-datetime');
 
-    // Заполнить стартовое значение по-умолчанию
-    const now = new Date();
-    const pad = n => n.toString().padStart(2, '0');
-    const localNow = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) +
-        'T' + pad(now.getHours()) + ':' + pad(now.getMinutes());
-    startInput.value = localNow;
+    // Функция для получения текущего локального времени в нужном формате
+    function getLocalDatetimeString() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    // Установка значения по умолчанию (локальное время телефона)
+    startInput.value = getLocalDatetimeString();
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const title = document.getElementById('title').value.trim();
         const description = document.getElementById('description').value.trim();
-        const start = startInput.value;
-        const end = endInput.value;
+        const startDateTime = document.getElementById('start-datetime').value;
+        const endDateTime = document.getElementById('end-datetime').value;
 
-        if (!start) {
+        if (!startDateTime) {
             alert("Укажите дату и время начала");
             return;
         }
 
-        const dtStart = start.replace(/[-:T]/g, '') + '00';
-        let dtEnd = '';
-        if (end) {
-            dtEnd = end.replace(/[-:T]/g, '') + '00';
+        // Формат для .ics: YYYYMMDDTHHMMSS
+        const dtStart = startDateTime.replace(/[-:]/g, '').slice(0, 15) + '00';
+        let dtEnd = dtStart;
+
+        if (endDateTime) {
+            dtEnd = endDateTime.replace(/[-:]/g, '').slice(0, 15) + '00';
         } else {
-            // если не указано окончание, по умолчанию +1 час
-            const dt = new Date(start);
-            dt.setHours(dt.getHours() + 1);
-            const y = dt.getFullYear();
-            const m = pad(dt.getMonth()+1);
-            const d = pad(dt.getDate());
-            const h = pad(dt.getHours());
-            const min = pad(dt.getMinutes());
-            dtEnd = `${y}${m}${d}T${h}${min}00`;
+            const start = new Date(startDateTime);
+            start.setHours(start.getHours() + 1);
+            const endStr = start.toLocaleString('sv-SE').replace(' ', 'T').slice(0, 16); // YYYY-MM-DDTHH:MM
+            dtEnd = endStr.replace(/[-:]/g, '') + '00';
         }
 
         const icsContent =
@@ -53,7 +56,6 @@ END:VCALENDAR`;
 
         const blob = new Blob([icsContent], { type: 'text/calendar' });
         const url = URL.createObjectURL(blob);
-
         const a = document.createElement('a');
         a.href = url;
         a.download = `${title || 'event'}.ics`;
