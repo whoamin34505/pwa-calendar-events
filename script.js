@@ -1,13 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("version 0.1.1")
+    console.log("version 0.1.2")
     const form = document.getElementById('event-form');
-    // Установить сегодняшнюю дату по умолчанию
-    const startDateInput = document.getElementById('start-date');
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    startDateInput.value = `${yyyy}-${mm}-${dd}`;
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -15,32 +8,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const title = document.getElementById('title').value.trim();
         const description = document.getElementById('description').value.trim();
 
-        const startDate = document.getElementById('start-date').value;
-        const startTime = document.getElementById('start-time').value;
-        if (!startDate || !startTime) {
+        const startDT = document.getElementById('start-dt').value;
+        if (!startDT) {
             alert("Укажите дату и время начала");
             return;
         }
-        // Формат: YYYYMMDDTHHMMSS
-        const dtStart = startDate.replace(/-/g, '') + 'T' + startTime.replace(':', '') + '00';
+        // Формат YYYYMMDDTHHMMSS
+        const dtStart = startDT.replace(/[-:T]/g, '') + '00';
 
         let dtEnd = '';
-        const endDate = document.getElementById('end-date').value;
-        const endTime = document.getElementById('end-time').value;
-        if (endDate && endTime) {
-            dtEnd = endDate.replace(/-/g, '') + 'T' + endTime.replace(':', '') + '00';
-        } else if (endTime && !endDate) {
-            dtEnd = startDate.replace(/-/g, '') + 'T' + endTime.replace(':', '') + '00';
-        } else if (!endTime && endDate) {
-            dtEnd = endDate.replace(/-/g, '') + 'T235900';
+        const endDT = document.getElementById('end-dt').value;
+        if (endDT) {
+            dtEnd = endDT.replace(/[-:T]/g, '') + '00';
         } else {
-            // если ничего не указано, +1 час к старту
-            const [hour, minute] = startTime.split(':').map(Number);
-            const dateObj = new Date(startDate + 'T' + startTime);
-            dateObj.setHours(hour + 1);
-            const endHour = String(dateObj.getHours()).padStart(2, '0');
-            const endMinute = String(dateObj.getMinutes()).padStart(2, '0');
-            dtEnd = startDate.replace(/-/g, '') + 'T' + endHour + endMinute + '00';
+            // если конец не указан, +1 час к старту
+            const dateObj = new Date(startDT);
+            dateObj.setHours(dateObj.getHours() + 1);
+            const yyyy = dateObj.getFullYear();
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const hh = String(dateObj.getHours()).padStart(2, '0');
+            const min = String(dateObj.getMinutes()).padStart(2, '0');
+            dtEnd = `${yyyy}${mm}${dd}T${hh}${min}00`;
         }
 
         const icsContent =
