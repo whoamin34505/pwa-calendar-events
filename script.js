@@ -1,35 +1,42 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("version 0.1.2")
     const form = document.getElementById('event-form');
+    const startInput = document.getElementById('start-dt');
+    const endInput = document.getElementById('end-dt');
+
+    // Заполнить стартовое значение по-умолчанию
+    const now = new Date();
+    const pad = n => n.toString().padStart(2, '0');
+    const localNow = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) +
+        'T' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    startInput.value = localNow;
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const title = document.getElementById('title').value.trim();
         const description = document.getElementById('description').value.trim();
+        const start = startInput.value;
+        const end = endInput.value;
 
-        const startDT = document.getElementById('start-dt').value;
-        if (!startDT) {
+        if (!start) {
             alert("Укажите дату и время начала");
             return;
         }
-        // Формат YYYYMMDDTHHMMSS
-        const dtStart = startDT.replace(/[-:T]/g, '') + '00';
 
+        const dtStart = start.replace(/[-:T]/g, '') + '00';
         let dtEnd = '';
-        const endDT = document.getElementById('end-dt').value;
-        if (endDT) {
-            dtEnd = endDT.replace(/[-:T]/g, '') + '00';
+        if (end) {
+            dtEnd = end.replace(/[-:T]/g, '') + '00';
         } else {
-            // если конец не указан, +1 час к старту
-            const dateObj = new Date(startDT);
-            dateObj.setHours(dateObj.getHours() + 1);
-            const yyyy = dateObj.getFullYear();
-            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const dd = String(dateObj.getDate()).padStart(2, '0');
-            const hh = String(dateObj.getHours()).padStart(2, '0');
-            const min = String(dateObj.getMinutes()).padStart(2, '0');
-            dtEnd = `${yyyy}${mm}${dd}T${hh}${min}00`;
+            // если не указано окончание, по умолчанию +1 час
+            const dt = new Date(start);
+            dt.setHours(dt.getHours() + 1);
+            const y = dt.getFullYear();
+            const m = pad(dt.getMonth()+1);
+            const d = pad(dt.getDate());
+            const h = pad(dt.getHours());
+            const min = pad(dt.getMinutes());
+            dtEnd = `${y}${m}${d}T${h}${min}00`;
         }
 
         const icsContent =
