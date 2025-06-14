@@ -52,26 +52,12 @@ END:VEVENT
 END:VCALENDAR`;
 
         const url = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title || 'event'}.ics`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
 
-
-        // Safari/iOS — открываем в новой вкладке, иначе — скачиваем
-        function isSafari() {
-            return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        }
-
-        if (isSafari()) {
-            alert("На iPhone и iPad скачивание ICS-файлов ограничено. Файл откроется в новой вкладке. Используйте 'Поделиться' → 'Сохранить в Файлы' или 'Открыть в Календаре'.");
-            window.open(url, '_blank');
-        } else {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${title || 'event'}.ics`;
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }, 0);
-        }
     });
 });
