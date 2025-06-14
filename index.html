@@ -20,27 +20,15 @@
             </div>
             <div class="form-group">
                 <label for="description">Описание</label>
-                <input type="text" id="description" required placeholder="Краткое описание">
+                <input type="text" id="description" placeholder="Краткое описание">
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="start-date">Дата начала</label>
-                    <input type="date" id="start-date" required>
-                </div>
-                <div class="form-group">
-                    <label for="start-time">Время начала</label>
-                    <input type="time" id="start-time" required>
-                </div>
+            <div class="form-group">
+                <label for="start-dt">Начало</label>
+                <input type="datetime-local" id="start-dt" required>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="end-date">Дата окончания</label>
-                    <input type="date" id="end-date">
-                </div>
-                <div class="form-group">
-                    <label for="end-time">Время окончания</label>
-                    <input type="time" id="end-time">
-                </div>
+            <div class="form-group">
+                <label for="end-dt">Окончание <span class="optional">(необязательно)</span></label>
+                <input type="datetime-local" id="end-dt" placeholder="Необязательно">
             </div>
             <button type="submit">Добавить в календарь</button>
         </form>
