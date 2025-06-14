@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    console.log("version 0.1.0\n")
     const form = document.getElementById('event-form');
     const startInput = document.getElementById('start-dt');
     const endInput = document.getElementById('end-dt');
