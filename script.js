@@ -51,8 +51,8 @@ DTEND:${dtEnd}
 END:VEVENT
 END:VCALENDAR`;
 
-        const blob = new Blob([icsContent], { type: 'text/calendar' });
-        const url = URL.createObjectURL(blob);
+        const url = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+
 
         // Safari/iOS — открываем в новой вкладке, иначе — скачиваем
         function isSafari() {
