@@ -1,43 +1,70 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('event-form');
+    // Установить сегодняшнюю дату по умолчанию
+    const startDateInput = document.getElementById('start-date');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    startDateInput.value = `${yyyy}-${mm}-${dd}`;
+
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const title = document.getElementById('title').value;
-        const description = document.getElementById('description').value;
-        const location = document.getElementById('Location').value;
-        const start = document.getElementById('start').value;
-        const end = document.getElementById('end').value;
+        const title = document.getElementById('title').value.trim();
+        const description = document.getElementById('description').value.trim();
 
-        const today = new Date();
-        const dateStr = today.toISOString().slice(0,10).replace(/-/g, '');
-        const dtStart = dateStr + 'T' + start.replace(':', '') + '00';
-        const dtEnd = dateStr + 'T' + (end ? end.replace(':', '') : start.replace(':', '')) + '00';
+        const startDate = document.getElementById('start-date').value;
+        const startTime = document.getElementById('start-time').value;
+        if (!startDate || !startTime) {
+            alert("Укажите дату и время начала");
+            return;
+        }
+        // Формат: YYYYMMDDTHHMMSS
+        const dtStart = startDate.replace(/-/g, '') + 'T' + startTime.replace(':', '') + '00';
 
-        const icsContent = [
-            'BEGIN:VCALENDAR',
-            'VERSION:2.0',
-            'PRODID:-//YourApp//EN',
-            'BEGIN:VEVENT',
-            `UID:${Date.now()}@yourapp`,
-            `DTSTAMP:${dtStart}Z`,
-            `DTSTART:${dtStart}`,
-            `DTEND:${dtEnd}`,
-            `SUMMARY:${title}`,
-            `DESCRIPTION:${description}`,
-            `LOCATION:${location}`,
-            'END:VEVENT',
-            'END:VCALENDAR'
-        ].join('\r\n');
+        let dtEnd = '';
+        const endDate = document.getElementById('end-date').value;
+        const endTime = document.getElementById('end-time').value;
+        if (endDate && endTime) {
+            dtEnd = endDate.replace(/-/g, '') + 'T' + endTime.replace(':', '') + '00';
+        } else if (endTime && !endDate) {
+            dtEnd = startDate.replace(/-/g, '') + 'T' + endTime.replace(':', '') + '00';
+        } else if (!endTime && endDate) {
+            dtEnd = endDate.replace(/-/g, '') + 'T235900';
+        } else {
+            // если ничего не указано, +1 час к старту
+            const [hour, minute] = startTime.split(':').map(Number);
+            const dateObj = new Date(startDate + 'T' + startTime);
+            dateObj.setHours(hour + 1);
+            const endHour = String(dateObj.getHours()).padStart(2, '0');
+            const endMinute = String(dateObj.getMinutes()).padStart(2, '0');
+            dtEnd = startDate.replace(/-/g, '') + 'T' + endHour + endMinute + '00';
+        }
+
+        const icsContent =
+`BEGIN:VCALENDAR
+VERSION:2.0
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+SUMMARY:${title}
+DESCRIPTION:${description}
+DTSTART:${dtStart}
+DTEND:${dtEnd}
+END:VEVENT
+END:VCALENDAR`;
 
         const blob = new Blob([icsContent], { type: 'text/calendar' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `${title}.ics`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const url = URL.createObjectURL(blob);
 
-        alert('ICS файл создан и загружен!');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title || 'event'}.ics`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 0);
     });
 });

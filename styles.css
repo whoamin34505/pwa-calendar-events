@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap');
+
+html, body, input, button, select, textarea, label {
+    font-family: 'Rubik', Arial, sans-serif;
+}
+
+:root {
+    --main-bg: #f7f9fc;
+    --block-bg: #fff;
+    --primary: #5b77ff;
+    --primary-dark: #3d56c6;
+    --accent: #6ee7b7;
+    --text: #202336;
+    --label: #7681a7;
+    --border: #e3e8f0;
+    --radius: 1.3em;
+    --header-bg: var(--primary);
+    --header-color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --main-bg: #181c24;
+        --block-bg: #232735;
+        --primary: #6b8cff;
+        --primary-dark: #3755a4;
+        --accent: #4ad991;
+        --text: #eaf1fa;
+        --label: #98a2c3;
+        --border: #31364a;
+        --header-bg: #222844;
+        --header-color: #fff;
+    }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--main-bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+header {
+    background: var(--header-bg);
+    color: var(--header-color);
+    text-align: center;
+    padding: 2em 1em 1.2em 1em;
+    border-bottom-left-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+    box-shadow: 0 2px 12px rgba(91,119,255,0.07);
+}
+
+main {
+    max-width: 420px;
+    margin: 2.5em auto;
+    background: var(--block-bg);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px rgba(91,119,255,0.10);
+    padding: 2em 1.5em 1.5em 1.5em;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2em;
+}
+
+.form-row {
+    display: flex;
+    gap: 1em;
+}
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 1em;
+    color: var(--label);
+    margin-bottom: 0.3em;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="time"] {
+    border: 1.5px solid var(--border);
+    border-radius: 0.7em;
+    padding: 0.8em 1em;
+    font-size: 1.1em;
+    background: var(--main-bg);
+    color: var(--text);
+    transition: border 0.2s, background 0.2s, color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus {
+    border: 1.5px solid var(--primary);
+    outline: none;
+    background: #f1f4fb;
+}
+
+@media (prefers-color-scheme: dark) {
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="time"]:focus {
+        background: #222844;
+    }
+}
+
+button[type="submit"] {
+    margin-top: 1em;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 0.8em;
+    padding: 1em 0;
+    font-size: 1.2em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s;
+    box-shadow: 0 2px 8px rgba(91,119,255,0.08);
+}
+button[type="submit"]:hover {
+    background: var(--primary-dark);
+}
+
+@media (max-width: 700px) {
+    main {
+        margin: 1.1em;
+        padding: 1.3em 0.6em;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 0.1em;
+    }
+    header {
+        font-size: 1.1em;
+        padding: 1.1em 0 0.8em 0;
+    }
+}
