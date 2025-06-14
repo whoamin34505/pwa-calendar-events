@@ -1,43 +1,46 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("version 0.1.0\n")
+    console.log("version 0.1.1")
     const form = document.getElementById('event-form');
-    const startInput = document.getElementById('start-dt');
-    const endInput = document.getElementById('end-dt');
-
-    // Автоматически подставлять сегодняшнюю дату и время
-    const now = new Date();
-    const pad = n => n.toString().padStart(2, '0');
-    const localNow = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) +
-        'T' + pad(now.getHours()) + ':' + pad(now.getMinutes());
-    startInput.value = localNow;
+    // Установить сегодняшнюю дату по умолчанию
+    const startDateInput = document.getElementById('start-date');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    startDateInput.value = `${yyyy}-${mm}-${dd}`;
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const title = document.getElementById('title').value.trim();
         const description = document.getElementById('description').value.trim();
-        const start = startInput.value;
-        const end = endInput.value;
 
-        if (!start) {
+        const startDate = document.getElementById('start-date').value;
+        const startTime = document.getElementById('start-time').value;
+        if (!startDate || !startTime) {
             alert("Укажите дату и время начала");
             return;
         }
+        // Формат: YYYYMMDDTHHMMSS
+        const dtStart = startDate.replace(/-/g, '') + 'T' + startTime.replace(':', '') + '00';
 
-        const dtStart = start.replace(/[-:T]/g, '') + '00';
         let dtEnd = '';
-        if (end) {
-            dtEnd = end.replace(/[-:T]/g, '') + '00';
+        const endDate = document.getElementById('end-date').value;
+        const endTime = document.getElementById('end-time').value;
+        if (endDate && endTime) {
+            dtEnd = endDate.replace(/-/g, '') + 'T' + endTime.replace(':', '') + '00';
+        } else if (endTime && !endDate) {
+            dtEnd = startDate.replace(/-/g, '') + 'T' + endTime.replace(':', '') + '00';
+        } else if (!endTime && endDate) {
+            dtEnd = endDate.replace(/-/g, '') + 'T235900';
         } else {
-            // если не указано окончание, по умолчанию +1 час
-            const dt = new Date(start);
-            dt.setHours(dt.getHours() + 1);
-            const y = dt.getFullYear();
-            const m = pad(dt.getMonth()+1);
-            const d = pad(dt.getDate());
-            const h = pad(dt.getHours());
-            const min = pad(dt.getMinutes());
-            dtEnd = `${y}${m}${d}T${h}${min}00`;
+            // если ничего не указано, +1 час к старту
+            const [hour, minute] = startTime.split(':').map(Number);
+            const dateObj = new Date(startDate + 'T' + startTime);
+            dateObj.setHours(hour + 1);
+            const endHour = String(dateObj.getHours()).padStart(2, '0');
+            const endMinute = String(dateObj.getMinutes()).padStart(2, '0');
+            dtEnd = startDate.replace(/-/g, '') + 'T' + endHour + endMinute + '00';
         }
 
         const icsContent =
@@ -52,13 +55,17 @@ DTEND:${dtEnd}
 END:VEVENT
 END:VCALENDAR`;
 
-        const url = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+        const blob = new Blob([icsContent], { type: 'text/calendar' });
+        const url = URL.createObjectURL(blob);
+
         const a = document.createElement('a');
         a.href = url;
         a.download = `${title || 'event'}.ics`;
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
-
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 0);
     });
 });
