@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('event-form');
-    // Установить сегодняшнюю дату по умолчанию
     const startDateInput = document.getElementById('start-date');
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -20,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Укажите дату и время начала");
             return;
         }
-        // Формат: YYYYMMDDTHHMMSS
         const dtStart = startDate.replace(/-/g, '') + 'T' + startTime.replace(':', '') + '00';
 
         let dtEnd = '';
